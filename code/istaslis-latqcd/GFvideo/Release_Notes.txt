@@ -1,0 +1,485 @@
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+OpenCL SDK Release Notes Version 3.0 Release
+NVIDIA GPU Computing Software Development Kit
+R195 Driver Release
+
+  Windows Windows XP, Windows Vista, and Windows 7 (32/64-bit)
+  Windows Server 2008 R2
+  Linux OS (32/64-bit)
+  Mac OSX  (10.5.x Leopard 32/64-bit, 10.6 SnowLeopard 32/64-bit)
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+TABLE OF CONTENTS
+--------------------------------------------------------------------------------
+I      Legal Notice
+II  A  Windows Installation Instructions
+II  B  Linux Installation Instructions
+III A  Creating Your Own OpenCL Program for Windows using the SDK infrastructure
+III B  Creating Your Own OpenCL Program for Linux using the SDK infrastructure
+IV  A  Creating Your Own OpenCL Program for Windows outside of the SDK infrastructure
+IV  B  Creating Your Own OpenCL Program for Linux outside of the SDK infrastructure
+V.     Known Issues 
+VI.    Frequently Asked Questions
+VII.   Change Log
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+I.   Legal Notice
+--------------------------------------------------------------------------------
+NOTICE:  This release is made available to you under the terms and conditions of the 
+end user license agreement (EULA) distributed with this release.  If you do not accept 
+the EULA, you do not have rights to use the files included in this release and must 
+delete all copies of all files associated with this release immediately.
+
+--------------------------------------------------------------------------------
+II.A.   Windows Installation Instructions
+--------------------------------------------------------------------------------
+
+1. The OpenCL applications in the NVIDIA GPU Computing SDK require a GPU with CUDA Compute 
+   Architecture to run properly. For a complete list of CUDA-Architecture compute-enabled GPUs, 
+   see the list online at:  http://www.nvidia.com/object/cuda_learn_products.html
+
+2. The OpenCL applications in the NVIDIA GPU Computing SDK require version 196.80 of the NVIDIA 
+   Display Driver or later to run on 32 bit or 64 bit Windows XP, Windows Vista or Windows 7.  
+   Drivers are available for download at:  http://developer.nvidia.com/object/opencl-download.html
+   
+   Please make sure to read the Driver Installation Hints Document before you 
+   install the driver: http://www.nvidia.com/object/driver_installation_hints.html
+
+3. Uninstall any previous versions of the NVIDIA GPU Computing SDK
+
+4. Install the NVIDIA GPU Computing SDK by running the installer provided for your OS.
+    
+   The default installation folder for the OpenCL SDK is: 
+
+   Windows XP
+       C:\Documents and Settings\All Users\Application Data\NVIDIA Corporation\NVIDIA GPU Computing SDK\OpenCL
+
+   Windows Vista
+       C:\ProgramData\NVIDIA Corporation\NVIDIA GPU Computing SDK\OpenCL
+           
+   Note: The "Application Data" and "ProgramData" folders are hidden by default on many Windows installations, but they
+   can be made visible if desired by changing the settings in "Folder Options" in the "Tools" menu in the Windows File
+   Explorer.
+      
+5. After installing the SDK, open the SDK Browser from the Start Menu by clicking on "NVIDIA GPU Computing 
+   SDK Browser" in the NVIDIA GPU Computing folder within the NVIDIA Corporation program group 
+   installed in the Windows Start Menu.  
+
+      - Each installed SDK sample program is shown along with links for running the executable and 
+        viewing the source code files.
+ 
+      - Some of the samples additionally present a link to a Whitepaper describing the sample in detail.
+ 
+      - The samples are presented within the SDK browser in approximate order of complexity,from the least 
+        complex projects at the top to the most complex projects at the bottom.
+
+6. Build the 32-bit or 64-bit (match the installation OS), release and debug  
+   configurations, of the entire set of SDK projects and utility dependencies using 
+   the provided oclRelease.sln solution for Microsoft Visual Studio Version 8/2005 
+   (or oclRelease_vc9.sln for Microsoft Visual Studio Version 9/2008).  
+
+   These .sln files are installed into the "\NVIDIA GPU Computing SDK\OpenCL" directory 
+   of the SDK. They will build or copy all sample .exe's and relevant .libs and .dll's 
+   for the present OS and place execution binaries in the proper directories within   
+   "\NVIDIA GPU Computing SDK\OpenCL\bin\<platform>\<configuration>" 
+   
+   For subsequent builds, you can either 
+      - Use the individual solution files located in each of the examples' directories in 
+        "NVIDIA GPU Computing SDK\OpenCL\src", or
+        
+      - Use the global solution files oclRelease.sln or oclRelease_vc9.sln located
+        in "\NVIDIA GPU Computing SDK\OpenCL".
+   
+7. Build Structure Notes for the OpenCL portion of the NVIDIA GPU Computing SDK:
+      
+      - "$(PlatformName)" is used by the Visual Studio projects in the SDK to switch to the 
+        correct OpenCL.lib file version (Win32 or x64) in the "NVIDIA GPU Computing SDK\OpenCL\lib" 
+        folder.  This is a stublib file needed at build time for implicit linking to the DLL file "OpenCL.dll", 
+        which is installed on the system with the proper NVIDIA GPU driver.
+        
+      - A post-build event is executed upon build of "oclRelease.sln" (oclRelease_vc9.sln) or
+        oclUtils.sln (oclUtils_vc9.sln), causing necessary dll's to be copied to the 
+        directory within "\NVIDIA GPU Computing SDK\OpenCL\bin\<platform>\<configuration>" 
+        (the same directory containing the exe's, as also discussed in item 6 above). This puts 
+        the DLL's in the first default path location searched by Windows upon execution. 
+
+      - The samples in the NVIDIA GPU Computing SDK link statically to a utility library called 
+        "shrUtils" which is a set of generic C++ utilities unrelated to OpenCL but useful for 
+        making sample demonstration applications with any of the NVIDIA GPU Computing API's. 
+
+          - Developers need not worry about shrUtils if step #6 above is executed, because this dependency 
+            is taken care of in step #6. But developers may review or edit source code for shrUtils using 
+            shrUtils.sln or shrUtils_vc9.sln in "\NVIDIA GPU Computing SDK\shared\". 
+        
+          - The release version of SDK samples link to shrUtils[32|64].lib. The debug versions 
+            of these samples link to shrUtils[32D|64D].lib .
+            
+          - The output of the shrUtils.sln compilation is set in project settings to go to the 
+            subdirectory "NVIDIA GPU Computing SDK\shared\lib".
+            
+          - shrUtils is provided and used in this SDK for convenience only.  It is not necessary for
+            independent OpenCL application development.
+
+      - The OpenCL samples in the NVIDIA GPU Computing SDK also link statically to a utility library called 
+        "oclUtils" which is a set of OpenCL related or OpenCL SDK specific utilities and also serves as a common 
+        header for most standard system includes and shrUtils.
+        
+          - Developers need not worry about oclUtils if step #6 above is executed, because this dependency 
+            is taken care of in step #6.  But developers may review or edit source code for oclUtils using 
+            oclUtils is found in oclUtils.sln (oclUtils_vc9.sln) in "\NVIDIA GPU Computing SDK\OpenCL\common". 
+
+          - The release version of SDK samples link to oclUtils[32|64].lib. The debug versions 
+            of these samples link to oclUtils[32D|64D].lib .
+
+          - The output of the oclUtils compilation is set in project settings to go to
+            "NVIDIA GPU Computing SDK\OpenCL\common\lib":
+
+          - oclUtils is provided and used in this SDK for convenience only.  It is not necessary for
+            independent OpenCL application development.
+
+8. To view the as-built sample applications after executing step 6, run the examples from the release 
+   or debug directories located in: "NVIDIA GPU Computing SDK\OpenCL\bin\win[32|64]\[release|debug]".
+
+    - All of the SDK applications output messages to a console window that are of interest from the 
+      standpoint of understanding basic OpenCL program flow, and several of the applications generate
+      graphics output in a separate OpenGL window.  
+      
+    - Many of the SDK applications present some timing information useful for obtaining an 
+      overall perspective of program structure and flow and the time required for setup and execution of 
+      significant functions.  The SDK example code, however, has generally been simplified for instructional 
+      purposes and is not optimized.  Advanced optimization techniques are beyond the scope of this SDK, and 
+      any timing information presented by the samples is not intended for such usage as benchmarking.  
+
+    - All of the applications additionally log all the console information to a session log file in the
+      same directory as the executables.  Those files are named clearly after the name of the sample app, 
+      but with a .txt extension.  
+
+    - For convenience, the oclSDK.bat batch file is placed in the executable directory by a post-build event
+      from build of oclRelease.sln (or oclRelease_vc9.sln).  When running this batch file, execution pauses 
+      only briefly at the completion of each sample, but the log files generated by each application (as noted 
+      above) may be viewed at the user's convenience after all samples have completed (a few minutes).  
+      The oclSDK.bat file also creates the integrated log file "oclSDK.txt" which contains the complete 
+      sequential output of all of the samples run by oclSDK.bat.
+
+
+9. A syntax highlighting file for Visual Studio 8/2005 or 9/2008 has been provided with this 
+   SDK in "NVIDIA GPU Computing SDK\OpenCL\doc\usertype.dat".  This file contains OpenCL API 
+   data types.  Adding this file to the proper directory (or pasting its contents into any 
+   pre-existing copy of this file) prior to starting Visual Studio will provide highlighting of 
+   the OpenCL specific data types.  
+   
+   The default location for the usertype.dat file for VS 8 and VS 9 on 32 bit Windows is
+        C:\Program Files\Microsoft Visual Studio 8\Common7\IDE  or
+        C:\Program Files\Microsoft Visual Studio 9\Common7\IDE  
+
+   The default location for the usertype.dat file for VS 8 and VS 9 on 64 bit Windows is
+        C:\Program Files (x86)\Microsoft Visual Studio 8\Common7\IDE  or
+        C:\Program Files (x86)\Microsoft Visual Studio 9\Common7\IDE     
+
+   See chapter 4 of the NVIDIA OpenCL Getting Started Guide for Windows for more information.
+
+--------------------------------------------------------------------------------
+II.B.   Linux Installation Instructions
+--------------------------------------------------------------------------------
+
+1. The OpenCL SDK samples in the NVIDIA GPU Computing SDK require a GPU with CUDA Compute 
+     Architecture to run properly. For a complete list of CUDA-Architecture compute-enabled GPUs, 
+     see the list online at:  http://www.nvidia.com/object/cuda_learn_products.html
+
+2. The OpenCL SDK samples in the NVIDIA GPU Computing SDK require version 195.36.08 of the NVIDIA 
+   Display Driver or later to run on 32 bit or 64 bit Linux. Drivers are available for download 
+   at:  http://developer.nvidia.com/object/opencl-download.html 
+   
+   Please make sure to read the Driver Installation Hints Document before you 
+   install the driver: http://www.nvidia.com/object/driver_installation_hints.html
+
+3. Uninstall any previous versions of the NVIDIA GPU Computing SDK
+
+4. Install the NVIDIA GPU Computing SDK by running the installer provided for your OS.
+             
+   The default installation folder for the OpenCL SDK is: 
+
+     Linux
+           $(HOME)/NVIDIA_GPU_Computing_SDK/  
+           
+     In the following we will refer to the path that the SDK is installed into as <NV_COMPUTE_SDK_PATH>.    
+     
+5. Build the 32-bit or 64-bit (match the installation OS), release and debug  
+   configurations, of the entire set of SDK projects and utility dependencies.
+   a. Go to <NV_COMPUTE_SDK_PATH>/OpenCL
+   b. Build:
+    - release configuration by typing "make".
+    - debug   configuration by typing "make dbg=1".
+
+   Running make at the top level first builds the shared and common util libraries used by
+   the SDK samples (these libraries are simply for convenience and are not part of the OpenCL
+   distribution and are not required for your own OpenCL programs). Make then builds each
+   of the projects in the SDK.    
+
+6. Run the examples from the release or debug directory located in 
+   <NV_COMPUTE_SDK_PATH>/OpenCL/bin/linux/[release|debug].
+
+    - Most of the SDK applications output messages to a console window that are of interest from the 
+      standpoint of understanding basic OpenCL program flow, and several of the applications generate
+      graphics output in a separate OpenGL window.  
+      
+    - Many of the SDK applications present some timing information useful for obtaining an 
+      overall perspective of program structure and flow and the time required for setup and execution of 
+      significant functions.  The SDK example code, however, has generally been simplified for instructional 
+      purposes and is not optimized.  Advanced optimization techniques are beyond the scope of this SDK, and 
+      any timing information presented by the samples is not intended for such usage as benchmarking.  
+
+    - All of the applications additionally log all the console information to a session log file in the
+      same directory as the executables.  Those files are named clearly after the name of the sample app, 
+      but with a .txt extension.
+
+    - For convenience, the Makefile in <NV_COMPUTE_SDK_PATH>/OpenCL can be used to execute all 
+      SDK samples sequentially by typing "make runall" or "make dbg=1 runall".
+
+--------------------------------------------------------------------------------
+III.A.  Creating a new OpenCL Program in Windows using the SDK infrastructure 
+--------------------------------------------------------------------------------
+
+Creating a new OpenCL Program using the NVIDIA OpenCL SDK infrastructure is easy.
+Just follow these steps:
+
+1. Copy one of the installed OpenCL SDK project folders, in it's entirety, into 
+   "\NVIDIA GPU Computing SDK\OpenCL\src" and then rename the folder. Now you have 
+   something like "\NVIDIA GPU Computing SDK\OpenCL\src\<myproject>"
+
+2. Edit the filenames of the project to suit your needs.
+
+3. Edit the *.sln, *.vcproj and source files. Just search and replace all
+   occurrences of the old filenames to the new ones you chose.
+
+4. Build the 32-bit and/or 64-bit, release and debug
+   configurations using <myproject>.sln or <myproject>_vc9.sln.
+
+5. Run <myproject>.exe from the release or debug, directories located in
+   "NVIDIA GPU Computing SDK\OpenCL\bin\win[32|64]\[release|debug]".
+
+6. Modify the code to perform the computation you require. See the OpenCL
+   Programming Guide, the OpenCL API Specifications, and the OpenCL Best Practices Guide
+   for details of programming in OpenCL.
+
+--------------------------------------------------------------------------------
+III.B. Creating Your Own OpenCL Program for Linux using the SDK infrastructure 
+--------------------------------------------------------------------------------
+
+Creating a new OpenCL Program using the NVIDIA OpenCL SDK infrastructure is easy.
+Just follow these steps:
+
+1. Copy one of the installed OpenCL SDK project folders, in it's entirety, into 
+   "<NV_COMPUTE_SDK_PATH>/OpenCL/src" and then rename the folder. Now you have 
+   something like "<NV_COMPUTE_SDK_PATH>/OpenCL/src/myproject"
+
+2. Edit the filenames of the project to suit your needs.
+
+3. Edit the Makefile. Just search and replace all
+   occurrences of the old filenames to the new ones you chose.
+
+4. Build the 32-bit and/or 64-bit, release and debug
+   configurations by typing "make" or "make dbg=1".
+
+5. Run your myproject executable from the release or debug, directories located in
+   "<NV_COMPUTE_SDK_PATH>/OpenCL/bin/linux/[release|debug]".
+
+6. Modify the code to perform the computation you require. See the OpenCL
+   Programming Guide and the OpenCL API Specifications for details of programming in OpenCL.
+
+--------------------------------------------------------------------------------
+IV.A. Creating a new OpenCL Program in Windows outside of the SDK infrastructure
+--------------------------------------------------------------------------------
+
+To create a new OpenCL Program without using the NVIDIA OpenCL SDK infrastructure, a few 
+key files are important to find and utilize.
+
+1. The only OpenCL-specific files needed to build an application to run with NVIDIA
+   compute-capable GPU's with CUDA architecture on a system with a supported OS using
+   recommended NVIDIA Display drivers supporting OpenCL, are:
+
+   - Headers:
+        cl.h
+        cl_platform.h        
+        cl_ext.h
+        cl_gl.h
+        cl_gl_ext.h
+        cl_d3d11_ext.h
+        cl_d3d10_ext.h
+        cl_d3d9_ext.h
+        opencl.h
+        
+        These files are located in "NVIDIA GPU Computing SDK\OpenCL\common\inc\CL"
+
+   - Stub Lib
+        OpenCL.lib (different file for Win32 and x64 platforms)
+
+        This .lib files are for build-time implicit linking to the OpenCL driver/compiler, 
+        OpenCL.dll, and they are located in: 
+        
+        "NVIDIA GPU Computing SDK\OpenCL\common\lib\[Win32|x64] 
+            
+        Note: These lib files are not needed for applications implementing explicit DLL linkage at run-time.
+
+   - Dynamic Link Library:
+
+        OpenCL.dll 
+        
+        This file is the binary OpenCL driver/compiler. The appropriate version of this file 
+        for a target platform is installed by the correct NVIDIA GPU driver installed on the system.  
+        It is needed during OpenCL program execution and is normally located in the \Windows\system32 
+        directory (in the default path for the system).  
+
+--------------------------------------------------------------------------------
+IV.B.  Creating Your Own OpenCL Program for Linux outside of the SDK infrastructure
+--------------------------------------------------------------------------------
+
+To create a new OpenCL Program without using the NVIDIA OpenCL SDK infrastructure, a few
+key files are important to find and utilize.
+
+1. The OpenCL-specific files needed to build an application to run with NVIDIA
+   compute-capable GPU's with CUDA architecture on a system with a supported OS using
+   recommended NVIDIA Display drivers supporting OpenCL, are:
+
+   - Headers:    
+        cl.h
+        cl_platform.h        
+        cl_ext.h
+        cl_gl.h
+        cl_gl_ext.h
+        opencl.h
+
+        These files are located in "NVIDIA GPU Computing SDK\OpenCL\common\inc\CL"
+
+   - Shared Library:
+         libOpenCL.so
+
+     This file for a target platform is installed by the correct NVIDIA GPU driver installed on the system.  
+        
+--------------------------------------------------------------------------------
+V. Known Issues
+--------------------------------------------------------------------------------
+1. On Mac OSX SnowLeopard (10.6) the following 3 SDK samples are not included with the OpenCL SDK package.
+   These samples are not currently working on OSX SnowLeopard.  We are working to resolve these issues.
+ 
+   -  oclFDTD3D
+   -  oclQuasirandomGenerator   
+   -  oclSimpleConvolution 
+      
+2. As of the release date for this updated SDK (Version 3.0 for R195 drivers), a mismatch with the 
+   pre-existing OpenCL support on Mac OSX causes build failures.  This issue will likely be resolved soon.
+   
+   The SDK is using the very latest headers from Khronos published February 17, 2010, along with updated NVIDIA 
+   extension headers.  But symbols for OpenCL support on Mac OSX are provided in OpenCL.framework, and the header 
+   files for the revision of OpenCL currently supported on Mac OSX are distributed by Apple, Inc. 
+   
+	 The version mismatch mainly appears to be the lack of definition for the cl_GLuint and cl_GLenum types within 
+	 the cl_gl.h file, i.e.:
+
+	     typedef unsigned int cl_GLuint;
+       typedef int cl_GLint;
+	     typedef unsigned int cl_GLenum;
+	 
+   Information about Mac OSX support for OpenCL is available he:
+   
+       http://developer.apple.com/mac/library/releasenotes/OpenCL/OpenCLRefUpdate/Introduction/Introduction.html
+         
+--------------------------------------------------------------------------------
+VI. Frequently Asked Questions
+--------------------------------------------------------------------------------
+
+Developers participating in an NDA or other early access programs should send
+questions, comments, etc. to opencl@nvidia.com and must not discuss their 
+experience with 3rd parties.
+
+The official public OpenCL FAQ is available online on the NVIDIA OpenCL Forums:
+
+    http://forums.nvidia.com/index.php?showforum=134
+
+--------------------------------------------------------------------------------
+VII.  Change Log (most recent changes listed first)
+--------------------------------------------------------------------------------
+OpenCL R195 Release
+* All OpenCL headers from Khronos updated
+* NVIDIA OpenCL extension headers updated and 4 new ones added
+	(cl_gl_ext.h, cl_d3d11_ext.h, cl_d3d10_ext.h, cl_d3d9_ext.h)
+* Support for ICD, CL-GL interop and CL-D3D interop
+	http://www.khronos.org/registry/cl/
+* Some SDK samples using both OpenGL and OpenCL have been updated to use new CL-GL interop
+* Bug fixes and improvements
+* Updated documentation
+
+OpenCL R195 Update Release
+* Miscellaneous SDK source code refinements in conjunction with updated/improved drivers
+* Included Khronos OpenCL Specification and quick reference card updated to latest versions
+* clext.h file name changed to cl_ext.h
+* Enumeration names for extensions in cl_ext.h have been updated
+* OpenCL.lib updated for change in OpenCL.dll (distributed separately with driver) from __cdecl to __stdcall   
+* Previous NVIDIA OpenCL drivers permitted developers to assume that the NULL or default platform, 
+  as passed to clCreateContext and related calls, was NVIDIA's platform. This approach is incompatible 
+  with supporting multiple vendors on a single platform (it would be unclear which vendor is the default). 
+  To prepare for compatibility with future multi-vendor OpenCL installations, NVIDIA’s drivers will no longer 
+  honor NULL as a platform. This requires OpenCL programs to be changed explicitly enumerate the 
+  available platforms and choose the appropriate vendors.  This change is reflected in the sample code
+  in this SDK release.
+
+OpenCL R190 Update Release
+* OpenCL compiler/driver moved from SDK to r190 GPU driver
+* OpenCL compiler/driver includes a number of fixes, extensions and perf improvements 
+* Updated OpenCL headers and libs 
+* Required/supplied r190 driver is compatible with CUDA 2.3
+* Added: Support for Windows 7 (32 bit and 64 bit)
+* Unified 32 bit Windows SDK packages for Win32 target. (32 bit Windows XP, Vista, Win7) = 1 SDK installer package
+* Unified 64 bit Windows SDK packages for x64 target. (64 bit Windows XP, Vista, Win7) = 1 SDK installer package
+* Cross compilation (32/64 and 64/32) now works for OpenCL sample projects
+* SDK Version 4788711 
+  Numerous revisions to SDK sample code, including multi-GPU support on several samples
+  Added samples:  oclMedianFilter, oclFDTD3d, oclRadixSort, 
+                  oclMersenneTwister, oclSemirandomGenerator,
+                  oclMatVecMul, oclHiddenMarkovModel
+* SDK samples now support Mac OSX SnowLeopard, but a few are excluded.  See Known Issues.
+* Added OpenCL Best Practices Guide
+* Added OpenCL Programming Overview
+* One set of unified Release Notes for Windows and Linux
+* Updated other documentation
+
+OpenCL 1.0 Conformant Release
+* Minor revisions to SDK content & added oclSobelFilter sample, SDK 1.00.00.07
+* OpenCL conformance 
+
+OpenCL 1.0 Beta 1.2
+* Minor revisions to SDK content, SDK 1.00.00.06
+* Bundle new OpenCL spec (v 1.00.43) from Khronos
+
+OpenCL 1.0 Beta 1.1
+* Vista32 and Vista64 OpenCL pre-release binaries revised to equivalent version as other platforms
+* Minor revisions to SDK content reflecting updated Vista 32 and 64 OpenCL binaries, SDK 1.00.00.05
+
+OpenCL 1.0 Beta 1
+* WinXP 32, WinXP64, Linux 32 & 64 (Kernel Version 2.6), WinVista 32 and WinVista 64 supported  
+* Updated GPU Display drivers to public WHQL driver 185.85 (Win) & 185.18.08 (Linux)
+  (GPU drivers are now compatible with CUDA 2.2 and OpenCL)
+* Elimination of most previous known issues for WinXP 32 & 64 and Linux 32 & 64
+* Misc. other updates and improvements, SDK 1.00.00.04
+
+OpenCL 1.0 Conformance Candidate Release 
+* WinXP 32 and Linux 32 (Kernel Version 2.6) supported  
+* Updated GPU Display drivers to public WHQL driver 185.85 (Win) & 185.18.08 (Linux)
+  (GPU drivers are now compatible with CUDA 2.2 and OpenCL)
+* Elimination of most previous known issues for WinXP 32 and Linux 32 
+* Misc. other updates and improvements
+
+Release 1.0 Alpha 2.1 
+* Add support for 64 bit WinXP, WinVista and Linux (Ubuntu 8.1).  
+* Misc. updates and improvements
+
+Release 1.0 Alpha 2 Windows Driver Refresh
+* Update for new Windows GPU drivers plus other corrections, additions, clarifications
+
+Release 1.0 Alpha 2
+* First Developer-Partner NDA Release
